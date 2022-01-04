@@ -2,3 +2,6 @@
 /shelf/
 /.idea/
 .env
+
+#Django
+db.sqlite3
