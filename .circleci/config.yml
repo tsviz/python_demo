@@ -22,7 +22,7 @@ jobs:
             pytest --version
           name: Test
       - store_test_results:
-          path: test-results
+          path: test-report
 
 workflows:
    main:
