@@ -19,7 +19,7 @@ jobs:
           pypi-cache: false
       - run:
           command: |
-            pytest --version
+            pytest --version --junit-xml=test-report/report.xml
           name: Test
       - store_test_results:
           path: test-report
