@@ -29,10 +29,9 @@ orbs:
 #            pytest
 
 workflows:
-  version: 2
-  build_and_test:
+   main:
     jobs:
-      - python/test
+      - python/test:
           pkg-manager: pipenv
           test-tool: pytest
 
