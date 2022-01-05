@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_nose',
 ]
 
 MIDDLEWARE = [
@@ -73,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
