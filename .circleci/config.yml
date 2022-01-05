@@ -14,11 +14,11 @@ jobs:
       - python/install-packages:
           args: pytest
           pkg-manager: pipenv
-      - python/test:
-          pkg-manager: pipenv
-          test-tool: pytest
 
 workflows:
    main:
     jobs:
       - build
+      - python/test:
+            pkg-manager: pipenv
+            test-tool: pytest
