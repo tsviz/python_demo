@@ -9,3 +9,4 @@ workflows:
       - python/test:
             pkg-manager: pipenv
             test-tool: pytest
+            pip-dependency-file: requirements.txt
