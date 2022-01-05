@@ -21,9 +21,9 @@ jobs:
           command: |
             . venv/bin/activate
             python3 manage.py test
-      - store_artifacts:
-          path: test-reports/
-          destination: python_app
+      - store_test_results:
+          path: test-results
+#          destination: python_app
 workflows:
   version: 2
   build_and_test:
