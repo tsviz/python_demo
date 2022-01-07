@@ -26,6 +26,10 @@ jobs:
           command: |
             pytest --junit-xml=test-report/report.xml
           name: Test
+      - run:
+          command: |
+            pylint polls
+          name: linting
       - store_test_results:
           path: test-report
       # Save workspace for subsequent jobs (i.e. test)
