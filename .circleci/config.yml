@@ -33,8 +33,11 @@ jobs:
     executor: python/default
     steps:
       - checkout
+#      - restore_cache:
       - run:
-          command: |
+          command: | 
+            virtualenv ~/venv
+            . ~/venv/bin/activate 
             pylint polls
           name: lint
 
