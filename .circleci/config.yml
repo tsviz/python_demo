@@ -28,16 +28,20 @@ jobs:
           name: Test
       - store_test_results:
           path: test-report
+      # Save workspace for subsequent jobs (i.e. test)
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
 
   lint:
     executor: python/default
     steps:
-      - checkout
-#      - restore_cache:
+      # Reuse the workspace from the build job
+      - attach_workspace:
+          at: .
       - run:
           command: | 
-            virtualenv ~/venv
-            . ~/venv/bin/activate 
             pylint polls
           name: lint
 
