@@ -28,7 +28,7 @@ jobs:
           name: Test
       - run:
           command: |
-            pylint polls
+            pylint polls --exit-zero
           name: linting
       - store_test_results:
           path: test-report
