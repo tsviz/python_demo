@@ -6,7 +6,7 @@ orbs:
 jobs:
   build:
     executor: python/default
-    parallelism: 2
+#    parallelism: 2
     steps:
       - checkout
       - python/install-packages:
@@ -25,7 +25,16 @@ jobs:
       - store_test_results:
           path: test-report
 
+  lint:
+    executor: python/default
+    steps:
+      - run:
+          command: |
+            pylint polls
+          name: lint
+
 workflows:
    main:
     jobs:
       - build
+      - lint
