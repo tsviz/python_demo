@@ -18,6 +18,10 @@ jobs:
           args: pytest
           pkg-manager: pip
           pypi-cache: false
+      - python/install-packages:
+          args: pylint
+          pkg-manager: pip
+          pypi-cache: false
       - run:
           command: |
             pytest --junit-xml=test-report/report.xml
