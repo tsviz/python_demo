@@ -28,6 +28,7 @@ jobs:
   lint:
     executor: python/default
     steps:
+      - checkout
       - run:
           command: |
             pylint polls
@@ -37,4 +38,6 @@ workflows:
    main:
     jobs:
       - build
-      - lint
+      - lint:
+          requires:
+            - build
