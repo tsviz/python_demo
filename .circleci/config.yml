@@ -59,13 +59,13 @@ jobs:
       # Reuse the workspace from the build job
 #      - attach_workspace:
 #          at: .
-#      - python/install-packages:
-#          args: pylint
-#          pkg-manager: pip
-#          pypi-cache: false
       - checkout
       - restore_cache:
           key: -pypi-<<parameters.cache-version>>-<<#parameters.include-branch-in-cache-key>>{{ .Branch }}-<</parameters.include-branch-in-cache-key>>{{ checksum "<< parameters.app-dir >>/<<parameters.pip-dependency-file>>" }}-<<#parameters.include-python-in-cache-key>>{{ checksum "/home/circleci/.pyenv/version" }}-<</parameters.include-python-in-cache-key>>
+      - python/install-packages:
+          args: pylint
+          pkg-manager: pip
+          pypi-cache: false
       - run:
           command: |
             pylint polls --exit-zero
