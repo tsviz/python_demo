@@ -36,10 +36,10 @@ jobs:
       # Reuse the workspace from the build job
       - attach_workspace:
           at: .
-      - python/install-packages:
-          args: pylint
-          pkg-manager: pip
-          pypi-cache: false
+#      - python/install-packages:
+#          args: pylint
+#          pkg-manager: pip
+#          pypi-cache: false
       - run:
           command: |
             pylint polls --exit-zero
