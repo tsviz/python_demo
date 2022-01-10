@@ -11,24 +11,12 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: pip
-#      - python/install-packages:
-#          pip-dependency-file: requirements.txt
-#          pkg-manager: pip
-#      - python/install-packages:
-#          args: pytest
-#          pkg-manager: pip
-#          pypi-cache: false
-      - run:
-          command: |
-            pytest --junit-xml=test-report/report.xml
-          name: Test
-      - store_test_results:
-          path: test-report
-      # Save workspace for subsequent jobs (i.e. test)
-#      - persist_to_workspace:
-#          root: .
-#          paths:
-#            - .
+#      - run:
+#          command: |
+#            pytest --junit-xml=test-report/report.xml
+#          name: Test
+#      - store_test_results:
+#          path: test-report
 
   lint:
     executor: python/default
@@ -78,3 +66,7 @@ workflows:
       - lint:
           requires:
             - build
+      - python/test:
+          requires:
+            - build
+          test-tool: pytest
