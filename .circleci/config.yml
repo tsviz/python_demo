@@ -58,7 +58,7 @@ jobs:
 
 
 
-  build-push-image-docker:
+  build-and-push-image:
     description: Build and push image to Google Container Registry
     machine: true
     steps:
@@ -101,9 +101,9 @@ workflows:
           requires:
             - lint
             - python/test
-      - build-push-image-docker:
+      - build-and-push-image:
           requires:
             - manual-approval
       - deploy:
           requires:
-            - build-push-image-docker
+            - build-and-push-image
