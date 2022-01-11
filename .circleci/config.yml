@@ -60,30 +60,9 @@ jobs:
 
   build-and-push-image:
     description: Build and push image to Google Container Registry
-    machine: true
-    steps:
-      - checkout
-      - gcr/gcr-auth
-      - gcr/build-image:
-          image: circle-gke
-          tag: "v10" #change when updating
-      - gcr/push-image:
-          image: circle-gke
-          tag: "v10" #change when updating
 
-  deploy:
+  publish-and-rollout-image:
     description: Deploy application to Google Kubernetes Engine
-    machine: true
-    steps:
-      # Install `gcloud` and `kubectl` if not already installed.
-      - gcp-gke/install
-      # Initialize the `gcloud` CLI.
-      - gcp-gke/init
-      # Update a deployment Docker image.
-      - gcp-gke/rollout-image:
-          deployment: circle-ci-cluster
-          container: alec-backend
-          image: gcr.io/circle-ci-demo/circle-gke:v10 # change version when updating
 
 workflows:
    main:
@@ -104,6 +83,6 @@ workflows:
       - build-and-push-image:
           requires:
             - manual-approval
-      - deploy:
+      - publish-and-rollout-image:
           requires:
             - build-and-push-image
