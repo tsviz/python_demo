@@ -102,7 +102,7 @@ workflows:
           requires:
             - manual-approval
       - gcp-gke/publish-and-rollout-image:
-#          requires: build-and-push-image
+          requires: build-and-push-image
           deployment: circle-ci-cluster
           cluster: circle-ci-cluster
           container: alec-backend
