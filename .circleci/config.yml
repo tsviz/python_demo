@@ -59,10 +59,28 @@ jobs:
 
 
   build-and-push-image:
+    machine: true
     description: Build and push image to Google Container Registry
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/build-image:
+          image: circle-gke
+          tag: "v10" #update when making changes
+      - gcp-gcr/push-image:
+          image: circle-gke
+          tag: "v10"
 
-  publish-and-rollout-image:
-    description: Deploy application to Google Kubernetes Engine
+
+#  deploy:
+#    machine: true
+#    description: Deploy application to Google Kubernetes Engine
+#    steps:
+#      - gcp-gke/install
+#      - gcp-gke/publish-and-rollout-image:
+#          deployment: circle-ci-cluster
+#          container: alec-backend
+#          image: gcr.io/circle-ci-demo/circle-gke:v10
 
 workflows:
    main:
@@ -83,6 +101,9 @@ workflows:
       - build-and-push-image:
           requires:
             - manual-approval
-      - publish-and-rollout-image:
-          requires:
-            - build-and-push-image
+      - gcp-gke/publish-and-rollout-image:
+#          requires: build-and-push-image
+          deployment: circle-ci-cluster
+          cluster: circle-ci-cluster
+          container: alec-backend
+          image: gcr.io/circle-ci-demo/circle-gke:v10
