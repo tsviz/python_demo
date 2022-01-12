@@ -104,7 +104,7 @@ workflows:
       - gcp-gke/publish-and-rollout-image:
           requires:
             - build-and-push-image
-          deployment: circle-ci-cluster
+          deployment: production-circle-demo
           cluster: circle-ci-cluster
           container: rusty-pangolin
           image: gcr.io/circle-ci-demo/circle-gke
