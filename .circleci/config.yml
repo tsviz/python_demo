@@ -106,5 +106,6 @@ workflows:
             - build-and-push-image
           deployment: circle-ci-cluster
           cluster: circle-ci-cluster
-          container: alec-backend
-          image: gcr.io/circle-ci-demo/circle-gke:v10
+          container: rusty-pangolin
+          image: gcr.io/circle-ci-demo/circle-gke
+          tag: "v10"
