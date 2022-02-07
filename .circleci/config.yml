@@ -8,7 +8,6 @@ orbs:
 jobs:
   build:
     executor: python/default
-#    parallelism: 2
     steps:
       - checkout
       - python/install-packages:
@@ -41,9 +40,6 @@ jobs:
           If true, this cache bucket will checksum the pyenv python version with the cache-key
         type: boolean
     steps:
-      # Reuse the workspace from the build job
-#      - attach_workspace:
-#          at: .
       - checkout
       - restore_cache:
           key: -pypi-<<parameters.cache-version>>-<<#parameters.include-branch-in-cache-key>>{{ .Branch }}-<</parameters.include-branch-in-cache-key>>{{ checksum "<< parameters.app-dir >>/<<parameters.pip-dependency-file>>" }}-<<#parameters.include-python-in-cache-key>>{{ checksum "/home/circleci/.pyenv/version" }}-<</parameters.include-python-in-cache-key>>
@@ -70,17 +66,6 @@ jobs:
       - gcp-gcr/push-image:
           image: circle-gke
           tag: "v10"
-
-
-#  deploy:
-#    machine: true
-#    description: Deploy application to Google Kubernetes Engine
-#    steps:
-#      - gcp-gke/install
-#      - gcp-gke/publish-and-rollout-image:
-#          deployment: circle-ci-cluster
-#          container: alec-backend
-#          image: gcr.io/circle-ci-demo/circle-gke:v10
 
 workflows:
    main:
@@ -109,3 +94,25 @@ workflows:
           container: rusty-pangolin
           image: gcr.io/circle-ci-demo/circle-gke
           tag: "v10"
+
+
+###########################################################################################################################
+# setup workflows ##
+#version: 2.1
+#
+#setup: true
+#
+#orbs:
+#   path-filtering: circleci/path-filtering@0.1.1
+#
+#workflows:
+#  setup-workflow:
+#    jobs:
+#      - path-filtering/filter:
+#          base-revision: main
+#          config-path: .circleci/continue-config.yml
+#          mapping: |
+#            mysite/.* mysite true
+#            polls/.* polls true
+#            .circleci/.* circle-ci true
+#            docs/.* docs true
