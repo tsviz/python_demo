@@ -124,30 +124,30 @@ workflows:
           image: gcr.io/circle-ci-demo/circle-gke
           tag: "v10"
 
-    polls:
-      when: << pipeline.parameters.polls >>
-      jobs:
-        - build
-        - lint:
-            requires:
-              - build
-        - python/test:
-            requires:
-              - build
-            test-tool: pytest
-        - manual-approval:
-            type: approval
-            requires:
-              - lint
-              - python/test
-        - build-and-push-image:
-            requires:
-              - manual-approval
-        - gcp-gke/publish-and-rollout-image:
-            requires:
-              - build-and-push-image
-            deployment: production-circle-demo
-            cluster: circle-ci-cluster
-            container: rusty-pangolin
-            image: gcr.io/circle-ci-demo/circle-gke
-            tag: "v10"
+   polls:
+    when: << pipeline.parameters.polls >>
+    jobs:
+      - build
+      - lint:
+          requires:
+            - build
+      - python/test:
+          requires:
+            - build
+          test-tool: pytest
+      - manual-approval:
+          type: approval
+          requires:
+            - lint
+            - python/test
+      - build-and-push-image:
+          requires:
+            - manual-approval
+      - gcp-gke/publish-and-rollout-image:
+          requires:
+            - build-and-push-image
+          deployment: production-circle-demo
+          cluster: circle-ci-cluster
+          container: rusty-pangolin
+          image: gcr.io/circle-ci-demo/circle-gke
+          tag: "v10"
