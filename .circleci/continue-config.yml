@@ -115,7 +115,7 @@ workflows:
       - gcp-gcr/build-and-push-image:
           requires:
             - manual-approval
-          context: qa
+#          context: qa
           executor: python/default
           image: circle-gke
           registry-url: us.gcr.io
@@ -149,7 +149,7 @@ workflows:
       - gcp-gcr/build-and-push-image:
           requires:
             - manual-approval
-          context: qa
+#          context: qa
           executor: python/default
           image: circle-gke
           registry-url: us.gcr.io
