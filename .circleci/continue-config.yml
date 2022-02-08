@@ -42,9 +42,9 @@ jobs:
           pkg-manager: pip
           pypi-cache: false
       - run: mkdir -p /tmp/test-results
-      - run: pytest --circleci-parallelize
+      - run: pytest --circleci-parallelize --junit-xml=test-report/report.xml
       - store_test_results:
-          path: /tmp/test-results
+          path: /tmp/test-report
 
   lint:
     executor: python/default
