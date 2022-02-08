@@ -65,18 +65,18 @@ jobs:
             pylint polls --exit-zero
           name: linting
 
-  build-and-push-image:
-    machine: true
-    description: Build and push image to Google Container Registry
-    steps:
-      - checkout
-      - gcp-gcr/gcr-auth
-      - gcp-gcr/build-image:
-          image: circle-gke
-          tag: "v10" #update when making changes
-      - gcp-gcr/push-image:
-          image: circle-gke
-          tag: "v10"
+#  build-and-push-image:
+#    machine: true
+#    description: Build and push image to Google Container Registry
+#    steps:
+#      - checkout
+#      - gcp-gcr/gcr-auth
+#      - gcp-gcr/build-image:
+#          image: circle-gke
+#          tag: "v10" #update when making changes
+#      - gcp-gcr/push-image:
+#          image: circle-gke
+#          tag: "v10"
 
   docs:
     machine: true
@@ -112,9 +112,15 @@ workflows:
           requires:
             - lint
             - python/test
-      - build-and-push-image:
+      - gcp-gcr/build-and-push-image:
           requires:
             - manual-approval
+          context: qa
+          executor: python/default
+          image: circle-gke
+          registry-url: us.gcr.io
+          setup-remote-docker: true
+          use-docker-layer-caching: true
       - gcp-gke/publish-and-rollout-image:
           requires:
             - build-and-push-image
@@ -140,9 +146,15 @@ workflows:
           requires:
             - lint
             - python/test
-      - build-and-push-image:
+      - gcp-gcr/build-and-push-image:
           requires:
             - manual-approval
+          context: qa
+          executor: python/default
+          image: circle-gke
+          registry-url: us.gcr.io
+          setup-remote-docker: true
+          use-docker-layer-caching: true
       - gcp-gke/publish-and-rollout-image:
           requires:
             - build-and-push-image
