@@ -32,6 +32,13 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
 
+  test:
+    executor: my-executor
+    parallelism: 2
+    steps:
+      - checkout
+      - run: pytest --circleci-parallelize
+
   lint:
     executor: python/default
     parameters:
@@ -108,10 +115,13 @@ workflows:
       - lint:
           requires:
             - build
-      - python/test:
+#      - python/test:
+#          requires:
+#            - build
+#          test-tool: pytest
+      - test:
           requires:
             - build
-          test-tool: pytest
       - manual-approval:
           type: approval
           requires:
@@ -142,10 +152,13 @@ workflows:
       - lint:
           requires:
             - build
-      - python/test:
+#      - python/test:
+#          requires:
+#            - build
+#          test-tool: pytest
+      - test:
           requires:
             - build
-          test-tool: pytest
       - manual-approval:
           type: approval
           requires:
