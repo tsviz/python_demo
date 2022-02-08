@@ -123,7 +123,7 @@ workflows:
           use-docker-layer-caching: true
       - gcp-gke/publish-and-rollout-image:
           requires:
-            - build-and-push-image
+            - gcp-gcr/build-and-push-image
           deployment: production-circle-demo
           cluster: circle-ci-cluster
           container: rusty-pangolin
@@ -157,7 +157,7 @@ workflows:
           use-docker-layer-caching: true
       - gcp-gke/publish-and-rollout-image:
           requires:
-            - build-and-push-image
+            - gcp-gcr/build-and-push-image
           deployment: production-circle-demo
           cluster: circle-ci-cluster
           container: rusty-pangolin
