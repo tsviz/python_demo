@@ -126,7 +126,7 @@ workflows:
           type: approval
           requires:
             - lint
-            - python/test
+            - test
       - gcp-gcr/build-and-push-image:
           requires:
             - manual-approval
@@ -163,7 +163,7 @@ workflows:
           type: approval
           requires:
             - lint
-            - python/test
+            - test
       - gcp-gcr/build-and-push-image:
           requires:
             - manual-approval
