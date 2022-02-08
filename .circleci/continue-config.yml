@@ -41,9 +41,10 @@ jobs:
           args: pytest
           pkg-manager: pip
           pypi-cache: false
+      - run: mkdir -p /tmp/test-results
       - run: pytest --circleci-parallelize
       - store_test_results:
-          path: test-results
+          path: /tmp/test-results
 
   lint:
     executor: python/default
