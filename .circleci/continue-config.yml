@@ -70,6 +70,8 @@ jobs:
       - run: pytest --circleci-parallelize --junit-xml=test-report/report.xml
       - store_test_results:
           path: test-report
+      - store_artifacts:
+          path: test-report
 
   lint:
     executor: python/default
