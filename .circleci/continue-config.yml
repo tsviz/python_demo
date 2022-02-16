@@ -142,7 +142,7 @@ workflows:
     when:
       or:
         - << pipeline.parameters.mysite >>
-        - - << pipeline.parameters.run-them-all >>
+        - << pipeline.parameters.run-them-all >>
     jobs:
       - build
       - lint:
