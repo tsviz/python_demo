@@ -100,11 +100,14 @@
 # setup workflows ##
 version: 2.1
 
+# denotes that it is setup workflow
 setup: true
 
+# using the path filtering orb
 orbs:
    path-filtering: circleci/path-filtering@0.1.1
 
+# workflow using path-filtering orb (w/ built in continuation)
 workflows:
   setup-workflow:
     jobs:
@@ -116,3 +119,4 @@ workflows:
             polls/.* polls true
             .circleci/.* circle-ci true
             docs/.* docs true
+            shared/.* run-them-all true

@@ -23,6 +23,9 @@ parameters:
   docs:
     type: boolean
     default: false
+  run-them-all:
+    type: boolean
+    default: false
 
 jobs:
   build:
@@ -120,17 +123,26 @@ jobs:
 
 workflows:
   circle-ci:
-    when: << pipeline.parameters.circle-ci >>
+    when:
+      or:
+        - << pipeline.parameters.circle-ci >>
+        - << pipeline.parameters.run-them-all >>
     jobs:
       - build
 
   docs:
-    when: << pipeline.parameters.docs >>
+    when:
+      or:
+        - << pipeline.parameters.docs >>
+        - << pipeline.parameters.run-them-all >>
     jobs:
       - docs
 
   mysite:
-    when: << pipeline.parameters.mysite >>
+    when:
+      or:
+        - << pipeline.parameters.mysite >>
+        - - << pipeline.parameters.run-them-all >>
     jobs:
       - build
       - lint:
@@ -162,7 +174,10 @@ workflows:
           tag: "v10"
 
   polls:
-    when: << pipeline.parameters.polls >>
+    when:
+      or:
+        - << pipeline.parameters.polls >>
+        - << pipeline.parameters.run-them-all >>
     jobs:
       - build
       - lint:
