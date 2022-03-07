@@ -5,6 +5,11 @@ orbs:
   gcp-gcr: circleci/gcp-gcr@0.13.0
   gcp-gke: circleci/gcp-gke@1.4.0
 
+executors:
+  my-executor:
+      docker:
+          - image: cimg/python:3.10.2
+
 jobs:
   build:
     executor: python/default
