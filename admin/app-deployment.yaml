@@ -20,6 +20,9 @@ spec:
       containers:
         - image: gcr.io/django-demo-cci/circleci-gke:v9
           name: rusty-pangolin
+          env:
+          - name: SECRET_KEY
+            value: dummy
           ports:
             - containerPort: 8000
               name: ci-deploy
