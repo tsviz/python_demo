@@ -143,7 +143,7 @@ workflows:
            container: rusty-pangolin
            image: gcr.io/circle-ci-demo/circle-gke
            tag: "v10"
-           extra-build-args: "SECRET_KEY=TEST"
+           extra-build-args: "--build-arg SECRET_KEY=TEST"
 
 
 ###########################################################################################################################
