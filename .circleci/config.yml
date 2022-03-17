@@ -135,6 +135,7 @@ workflows:
            registry-url: us.gcr.io
            setup-remote-docker: true
            use-docker-layer-caching: true
+           extra-build-args: "SECRET_KEY=TEST"
        - gcp-gke/publish-and-rollout-image:
            requires:
              - gcp-gcr/build-and-push-image
