@@ -107,10 +107,10 @@ jobs:
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           image: circle-gke
-          tag: "v10" #update when making changes
+          tag: "10.0.1" #update when making changes
       - gcp-gcr/push-image:
           image: circle-gke
-          tag: "v10"
+          tag: "10.0.1"
 
 workflows:
    main:
@@ -142,7 +142,9 @@ workflows:
            cluster: circle-ci-cluster
            container: rusty-pangolin
            image: gcr.io/circle-ci-demo/circle-gke
-           tag: "v10"
+           namespace: production
+           registry-url: us.gcr.io
+           tag: "10.0.1"
            extra-build-args: "--build-arg SECRET_KEY=TEST"
 
 
