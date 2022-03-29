@@ -140,7 +140,7 @@ workflows:
              - gcp-gcr/build-and-push-image
            deployment: circleci-gke-v10
            cluster: circle-ci-cluster
-           container: rusty-pangolin
+           container: circleci-gke
            image: gcr.io/circle-ci-demo/circle-gke
            namespace: production
            registry-url: us.gcr.io
