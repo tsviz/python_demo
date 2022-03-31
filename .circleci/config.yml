@@ -107,10 +107,10 @@ jobs:
       - gcp-gcr/gcr-auth
       - gcp-gcr/build-image:
           image: circle-gke
-          tag: "10.0.1" #update when making changes
+          tag: "${VERSION}" #update when making changes
       - gcp-gcr/push-image:
           image: circle-gke
-          tag: "10.0.1"
+          tag: "${VERSION}"
 
 workflows:
    main:
@@ -138,13 +138,13 @@ workflows:
        - gcp-gke/publish-and-rollout-image:
            requires:
              - gcp-gcr/build-and-push-image
-           deployment: circleci-gke-v10
+           deployment: circleci-gke-v${VERSION}
            cluster: circle-ci-cluster
            container: circleci-gke
            image: gcr.io/circle-ci-demo/circle-gke
            namespace: production
            registry-url: us.gcr.io
-           tag: "10.0.1"
+           tag: ${VERSION}
            extra-build-args: "--build-arg SECRET_KEY=TEST"
 
 
