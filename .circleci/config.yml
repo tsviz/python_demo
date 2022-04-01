@@ -113,26 +113,28 @@ jobs:
 
   build-and-push-image:
     machine: true
+    docker_layer_caching: true
     description: Build and push image to Google Container Registry
     steps:
       - checkout
       - set-build-env
-#      - gcp-gcr/gcr-auth
-      - gcp-gcr/build-and-push-image:
-          requires:
-            - manual-approval
-          executor: my-executor
-          image: circle-gke
+      - gcp-gcr/gcr-auth:
           registry-url: us.gcr.io
-          setup-remote-docker: true
-          use-docker-layer-caching: true
+#      - gcp-gcr/build-and-push-image:
+#          executor: my-executor
+#          image: circle-gke
+#
+#          setup-remote-docker: true
+#          use-docker-layer-caching: true
+#          tag: "${VERSION}"
+      - gcp-gcr/build-image:
+          registry-url: us.gcr.io
+          image: circle-gke
           tag: "${VERSION}"
-#      - gcp-gcr/build-image:
-#          image: circle-gke
-#          tag: "${VERSION}"
-#      - gcp-gcr/push-image:
-#          image: circle-gke
-#          tag: "${VERSION}"
+      - gcp-gcr/push-image:
+          registry-url: us.gcr.io
+          image: circle-gke
+          tag: "${VERSION}"
 
   update-deployment:
     docker:
