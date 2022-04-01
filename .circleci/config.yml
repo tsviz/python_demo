@@ -186,7 +186,7 @@ workflows:
              - manual-approval
        - update-deployment:
            requires:
-             - gcp-gcr/build-and-push-image
+             - build-and-push-image
 
 
 ###########################################################################################################################
