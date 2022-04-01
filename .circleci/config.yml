@@ -136,7 +136,7 @@ jobs:
       - run:
           name: Update image & version in manifest
           command: |
-            envsubst < vamp/deployment.yml > modified-deployment.yaml
+            envsubst < vamp/deployment.yaml > modified-deployment.yaml
             cat modified-deployment.yaml
       - gcp-gke/update-kubeconfig-with-credentials:
           install-kubectl: true
