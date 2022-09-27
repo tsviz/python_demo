@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: circleci-django-demo-v${VERSION}
-  namespace: production
+  name: alec-buchanan-demo-v${VERSION}
+  namespace: default
   labels:
     app: circleci-gke
     version: "${VERSION}"
@@ -21,20 +21,43 @@ spec:
       containers:
       - name: circleci-gke
         imagePullPolicy: Always
-        image: "us.gcr.io/django-demo-cci/circle-gke:${VERSION}"
+        image: "us.gcr.io/django-demo-cci/alec-buchanan-demo:${VERSION}"
         env:
           - name: SECRET_KEY
             value: dummy
         ports:
         - containerPort: 8000
-#        livenessProbe:
-#          httpGet:
-#            path: /
-#            port: http
-#            scheme: HTTP
-#          failureThreshold: 1
         resources:
           limits:
             memory: 512Mi
           requests:
             memory: 128Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alec-buchanan-demo-entrypoint
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: circleci-gke
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-np-service
+spec:
+  type: NodePort
+  selector:
+    app: circleci-gke
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
