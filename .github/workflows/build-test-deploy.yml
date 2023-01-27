@@ -8,140 +8,162 @@ env:
   total-runners: 5  
 
 jobs:
-  runner-indexes:
-    runs-on: ubuntu-latest
-    name: Generate runner indexes
-    outputs:
-      json: ${{ steps.generate-index-list.outputs.json }}
-    steps:
-      - id: generate-index-list
-        run: |
-          MAX_INDEX=$((${{ env.total-runners }}-1))
-          INDEX_LIST=$(seq 0 ${MAX_INDEX})
-          INDEX_JSON=$(jq --null-input --compact-output '. |= [inputs]' <<< ${INDEX_LIST})
-          echo "::set-output name=json::${INDEX_JSON}"
-
   run-parallel-tests:
     runs-on: ubuntu-latest
-    name: "Runner #${{ matrix.runner-index }}: Run test suite in parallel"
-    needs:
-      - runner-indexes
     strategy:
       matrix:
-        runner-index: ${{ fromjson(needs.runner-indexes.outputs.json) }}
+        group: [1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@v2
-      - uses: chaosaffe/split-tests@v1-alpha.1
-        id: split-tests
-        name: Split tests
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
         with:
-          glob: polls/*tests.py
-          split-total: ${{ env.total-runners }}
-          split-index: ${{ matrix.runner-index }}
-      - run: 'echo "This runner will execute the following tests: ${{ steps.split-tests.outputs.test-suite }}"'
+          python-version: 3.9
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run pytest
+        run: pytest --cov --splits 5 --group ${{ matrix.group }}
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage${{ matrix.group }}
+          path: .coverage
+  # runner-indexes:
+  #   runs-on: ubuntu-latest
+  #   name: Generate runner indexes
+  #   outputs:
+  #     json: ${{ steps.generate-index-list.outputs.json }}
+  #   steps:
+  #     - id: generate-index-list
+  #       run: |
+  #         MAX_INDEX=$((${{ env.total-runners }}-1))
+  #         INDEX_LIST=$(seq 0 ${MAX_INDEX})
+  #         INDEX_JSON=$(jq --null-input --compact-output '. |= [inputs]' <<< ${INDEX_LIST})
+  #         echo "::set-output name=json::${INDEX_JSON}"
 
-  test:
-    runs-on: ubuntu-latest
-    container:
-      image: python:3.10.7
-    steps:
-    - uses: actions/checkout@v3.3.0
-    - name: Get python version
-      id: python-version
-      run: echo "::set-output name=python-version::$(python -V 2>&1)"
-    - uses: actions/cache@v3.2.2
-      with:
-        path: "~/.cache/pip"
-        key: "${{ runner.os }}-${{ github.ref }}-pip-${{ steps.python-version.outputs.python-version }}-${{ hashFiles('requirements.txt') }}"
-    - name: Install dependencies with pip using project
-      run: pip install -r requirements.txt
-    - name: Run tests
-      run: pytest --circleci-parallelize --junit-xml=test-results/junit.xml
-    - uses: actions/upload-artifact@v3.1.1
-      with:
-        path: test-results
-    - uses: actions/upload-artifact@v3.1.1
-      with:
-        path: test-results
+  # run-parallel-tests:
+  #   runs-on: ubuntu-latest
+  #   name: "Runner #${{ matrix.runner-index }}: Run test suite in parallel"
+  #   needs:
+  #     - runner-indexes
+  #   strategy:
+  #     matrix:
+  #       runner-index: ${{ fromjson(needs.runner-indexes.outputs.json) }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: chaosaffe/split-tests@v1-alpha.1
+  #       id: split-tests
+  #       name: Split tests
+  #       with:
+  #         glob: polls/*tests.py
+  #         split-total: ${{ env.total-runners }}
+  #         split-index: ${{ matrix.runner-index }}
+  #     - run: 'echo "This runner will execute the following tests: ${{ steps.split-tests.outputs.test-suite }}"'
 
-  lint:
-    runs-on: ubuntu-latest
-    container:
-      image: python:3.10.7
-    steps:
-    - uses: actions/checkout@v3.3.0
-    - name: Get python version
-      id: python-version
-      run: echo "::set-output name=python-version::$(python -V 2>&1)"
-    - uses: actions/cache@v3.2.2
-      with:
-        path: "~/.cache/pip"
-        key: "${{ runner.os }}-${{ github.ref }}-pip-${{ steps.python-version.outputs.python-version }}-${{ hashFiles('requirements.txt') }}"
-    - name: Install dependencies with pip using project
-      run: pip install -r requirements.txt
-    - name: linting
-      run: pylint polls --exit-zero
+  # test:
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: python:3.10.7
+  #   steps:
+  #   - uses: actions/checkout@v3.3.0
+  #   - name: Get python version
+  #     id: python-version
+  #     run: echo "::set-output name=python-version::$(python -V 2>&1)"
+  #   - uses: actions/cache@v3.2.2
+  #     with:
+  #       path: "~/.cache/pip"
+  #       key: "${{ runner.os }}-${{ github.ref }}-pip-${{ steps.python-version.outputs.python-version }}-${{ hashFiles('requirements.txt') }}"
+  #   - name: Install dependencies with pip using project
+  #     run: pip install -r requirements.txt
+  #   - name: Run tests
+  #     run: pytest --circleci-parallelize --junit-xml=test-results/junit.xml
+  #   - uses: actions/upload-artifact@v3.1.1
+  #     with:
+  #       path: test-results
+  #   - uses: actions/upload-artifact@v3.1.1
+  #     with:
+  #       path: test-results
 
-  snyk-scan:
-    runs-on: ubuntu-latest
-    container:
-      image: python:3.10.7
-    steps:
-    - uses: actions/checkout@v3.3.0
-    - name: Get python version
-      id: python-version
-      run: echo "::set-output name=python-version::$(python -V 2>&1)"
-    - uses: actions/cache@v3.2.2
-      with:
-        path: "~/.cache/pip"
-        key: "${{ runner.os }}-${{ github.ref }}-pip-${{ steps.python-version.outputs.python-version }}-${{ hashFiles('requirements.txt') }}"
-    - name: Install dependencies with pip using project
-      run: pip install -r requirements.txt
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: python:3.10.7
+  #   steps:
+  #   - uses: actions/checkout@v3.3.0
+  #   - name: Get python version
+  #     id: python-version
+  #     run: echo "::set-output name=python-version::$(python -V 2>&1)"
+  #   - uses: actions/cache@v3.2.2
+  #     with:
+  #       path: "~/.cache/pip"
+  #       key: "${{ runner.os }}-${{ github.ref }}-pip-${{ steps.python-version.outputs.python-version }}-${{ hashFiles('requirements.txt') }}"
+  #   - name: Install dependencies with pip using project
+  #     run: pip install -r requirements.txt
+  #   - name: linting
+  #     run: pylint polls --exit-zero
+
+  # snyk-scan:
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: python:3.10.7
+  #   steps:
+  #   - uses: actions/checkout@v3.3.0
+  #   - name: Get python version
+  #     id: python-version
+  #     run: echo "::set-output name=python-version::$(python -V 2>&1)"
+  #   - uses: actions/cache@v3.2.2
+  #     with:
+  #       path: "~/.cache/pip"
+  #       key: "${{ runner.os }}-${{ github.ref }}-pip-${{ steps.python-version.outputs.python-version }}-${{ hashFiles('requirements.txt') }}"
+  #   - name: Install dependencies with pip using project
+  #     run: pip install -r requirements.txt
 #     # This item has no matching transformer
 #     - snyk_snyk_scan:
-  build-and-push-image:
-    runs-on: ubuntu-20.04
-    needs:
-    - test
-    - lint
-    - snyk-scan
-    steps:
-    - uses: actions/checkout@v3.3.0
-    - uses: "./.github/actions/set-build-env"
+  # build-and-push-image:
+  #   runs-on: ubuntu-20.04
+  #   needs:
+  #   - test
+  #   - lint
+  #   - snyk-scan
+  #   steps:
+  #   - uses: actions/checkout@v3.3.0
+  #   - uses: "./.github/actions/set-build-env"
 #     # This item has no matching transformer
 #     - circleci_gcp_gcr_gcr_auth:
 #     # This item has no matching transformer
 #     - circleci_gcp_gcr_build_image:
 #     # This item has no matching transformer
 #     - circleci_gcp_gcr_push_image:
-  manual-approval:
-    environment:
-      name: approval
-    runs-on: ubuntu-latest
-    needs:
-    - build-and-push-image
-    steps:
-    - run: echo 'approved'
-  update-deployment:
-    runs-on: ubuntu-latest
-    container:
-      image: ubuntu
-    needs:
-    - manual-approval
-    steps:
-    - uses: actions/checkout@v3.3.0
-    - run: sudo apt-get update && sudo apt-get install gettext-base graphviz
-    - uses: "./.github/actions/set-build-env"
-    - name: Update image & version in manifest
-      run: |-
-        envsubst < /home/circleci/project/deployment.yaml > modified-deployment.yaml
-        cat modified-deployment.yaml
-#     # This item has no matching transformer
-#     - circleci_gcp_gke_update_kubeconfig_with_credentials:
-#     # This item has no matching transformer
-#     - circleci_kubernetes_create_or_update_resource:
-    - run: kubectl rollout status deployment/alec-buchanan-demo-v"${VERSION}"
-    - name: Update image & version in manifest
-      run: |-
-        envsubst < /home/circleci/project/deployment.yaml > modified-deployment.yaml
-        cat modified-deployment.yaml
+#   manual-approval:
+#     environment:
+#       name: approval
+#     runs-on: ubuntu-latest
+#     needs:
+#     - build-and-push-image
+#     steps:
+#     - run: echo 'approved'
+#   update-deployment:
+#     runs-on: ubuntu-latest
+#     container:
+#       image: ubuntu
+#     needs:
+#     - manual-approval
+#     steps:
+#     - uses: actions/checkout@v3.3.0
+#     - run: sudo apt-get update && sudo apt-get install gettext-base graphviz
+#     - uses: "./.github/actions/set-build-env"
+#     - name: Update image & version in manifest
+#       run: |-
+#         envsubst < /home/circleci/project/deployment.yaml > modified-deployment.yaml
+#         cat modified-deployment.yaml
+# #     # This item has no matching transformer
+# #     - circleci_gcp_gke_update_kubeconfig_with_credentials:
+# #     # This item has no matching transformer
+# #     - circleci_kubernetes_create_or_update_resource:
+#     - run: kubectl rollout status deployment/alec-buchanan-demo-v"${VERSION}"
+#     - name: Update image & version in manifest
+#       run: |-
+#         envsubst < /home/circleci/project/deployment.yaml > modified-deployment.yaml
+#         cat modified-deployment.yaml
