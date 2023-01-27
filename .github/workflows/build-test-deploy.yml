@@ -1,8 +1,8 @@
 name: alecbuchanan/cicd_demo/build-test-deploy
+
 on:
-  push:
-    branches:
-    - main
+  push
+
 jobs:
   test:
     runs-on: ubuntu-latest
