@@ -20,6 +20,8 @@ jobs:
 
   run-parallel-tests:
     runs-on: ubuntu-latest
+    needs:
+      - build
     strategy:
       matrix:
         group: [1, 2, 3, 4]
